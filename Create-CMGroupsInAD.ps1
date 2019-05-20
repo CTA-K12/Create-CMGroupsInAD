@@ -14,13 +14,13 @@ Import-Module ActiveDirectory
 
 $rootDN = [ADSI]"LDAP://RootDSE"; $rootDN = $rootDN.rootDomainNamingContext
 $softwareDistrobutionDN = 'OU=Software Distribution,', "$rootDN" -join ''
-$csvpath = C:\Scipts\Create-CMGroupsInAD\groups.csv
-
-Invoke-WebRequest -Uri "https://raw.githubusercontent.com/CascadeTechnologyAlliance/Create-CMGroupsInAD/master/Groups.csv" | Select-Object -ExpandProperty Content | Out-File $csvpath
-
+$csvpath = "C:\Scripts\Create-CMGroupsInAD\Groups.csv"
+Remove-Item -Path $csvpath
+Invoke-WebRequest -Uri "https://raw.githubusercontent.com/CascadeTechnologyAlliance/Create-CMGroupsInAD/master/Groups.csv" -UseBasicParsing | Select-Object -ExpandProperty Content | Out-File $csvpath
 $AllGroups = Import-Csv -Path $csvpath
 
 foreach ($Group in $AllGroups) {
+	$Group = $Group.Group
 	if (-not (Get-ADGroup -Filter { name -like $Group } -SearchBase $softwareDistrobutionDN -ErrorAction SilentlyContinue)) {
 		New-ADGroup -Path $softwareDistrobutionDN -Name $Group -GroupScope Global -GroupCategory Security
 	}
@@ -30,8 +30,8 @@ foreach ($Group in $AllGroups) {
 # SIG # Begin signature block
 # MIIQuAYJKoZIhvcNAQcCoIIQqTCCEKUCAQExDzANBglghkgBZQMEAgEFADB5Bgor
 # BgEEAYI3AgEEoGswaTA0BgorBgEEAYI3AgEeMCYCAwEAAAQQH8w7YFlLCE63JNLG
-# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCB2Exk+VRR71uFW
-# v+Y/IBFTlhSSDCaWIuW3e0unWpdH+KCCC8UwggMGMIIB7qADAgECAhAvm0sjSQH3
+# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCAbOA1FjL7xao6z
+# idKvvW8F15/FNEkz2mqv1Rz76oIjxKCCC8UwggMGMIIB7qADAgECAhAvm0sjSQH3
 # m0LSdEnNXu4qMA0GCSqGSIb3DQEBBQUAMBYxFDASBgNVBAMMC0VkZW4gTmVsc29u
 # MB4XDTE3MDkwODIyMjY1MVoXDTM3MDkwODIyMzY1MVowFjEUMBIGA1UEAwwLRWRl
 # biBOZWxzb24wggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQC3lMKGVj2k
@@ -96,26 +96,26 @@ foreach ($Group in $AllGroups) {
 # iLmzGybu555gxEaovGEzbM9OuZy5avCfN/61PU+a003/3iCOTpem/Z8JvE3KGHbJ
 # sE2FUPKA0h0G9VgEB7EYMYIESTCCBEUCAQEwKjAWMRQwEgYDVQQDDAtFZGVuIE5l
 # bHNvbgIQL5tLI0kB95tC0nRJzV7uKjANBglghkgBZQMEAgEFAKBMMBkGCSqGSIb3
-# DQEJAzEMBgorBgEEAYI3AgEEMC8GCSqGSIb3DQEJBDEiBCBLBuVehtxu+GfQfVP4
-# crZdP6YMMdx8EguXdK/8/BemvjANBgkqhkiG9w0BAQEFAASCAQBUwQkF6vwBJwNz
-# gFhcIHM5uYJbz6r8lv4H3LACArLEH7GECAPyIJSZBgyRPs3aaDdm8jcJtUn9iXdx
-# oP74/CDIIHYgJXeTfw88xfXTfEPlbgY2BjyPVeF5dNvwVJ4oeEdvMA8M4XjwGrm5
-# BvhyS+usvehnbqyfSbhzUOb5PEF6Uo786s1odSM2y4cw8yjraCukWgaz45e4i4J3
-# WOb4GJxr2tPM15iVmUhLHJJsUgepnsupbwJ/sOJHNj4l9/Okl+JtdjsLse8MIn1W
-# upRiJhdnYoRWebq6tDEglPGUXfuxMUpJtH30sFh8Mn3Q/mOMXhrmii5LnB53WDC4
-# EDcpknYNoYICojCCAp4GCSqGSIb3DQEJBjGCAo8wggKLAgEBMGgwUjELMAkGA1UE
+# DQEJAzEMBgorBgEEAYI3AgEEMC8GCSqGSIb3DQEJBDEiBCBL0FuqNYFAJO124V+p
+# KYJmY28i2SsiNLAe8ngCIOUgTzANBgkqhkiG9w0BAQEFAASCAQByIKOWvyvdGRVO
+# R+iMwCIknutMP6h+zZGwKC7q1Y7A1tbhePxlY+B0kYDhOpAnne3JmoQBrYXY0AVo
+# Oj7SKyXwkqp4AvRT77KiniON8LSXRCk5u3Kc8OdX5PXEHsse7aiHMirHsUhoqBbU
+# kkmWk0HRVmGD2l+bZY6UF0J5bS4Mby4ufP9eaDOrPdGYPDM1NXExEtedKmbWairv
+# ialX0yF9PHNd8Cnk0581tO4CJdNr/g2qYpdmvXR9dhT3GSdGY8uF4OzItLrOPzNn
+# RLSlE+th8Tv4JfUMlOXn/R9EKZ4GtmEV/82JTNF1q0OqfINCZNoL+RjouIBOU23E
+# 03L8JtvdoYICojCCAp4GCSqGSIb3DQEJBjGCAo8wggKLAgEBMGgwUjELMAkGA1UE
 # BhMCQkUxGTAXBgNVBAoTEEdsb2JhbFNpZ24gbnYtc2ExKDAmBgNVBAMTH0dsb2Jh
 # bFNpZ24gVGltZXN0YW1waW5nIENBIC0gRzICEhEh1pmnZJc+8fhCfukZzFNBFDAJ
 # BgUrDgMCGgUAoIH9MBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcN
-# AQkFMQ8XDTE5MDUyMDE2MDk0N1owIwYJKoZIhvcNAQkEMRYEFGX3JY9l4GLLihah
-# X8NCLOnUEYz5MIGdBgsqhkiG9w0BCRACDDGBjTCBijCBhzCBhAQUY7gvq2H1g5CW
+# AQkFMQ8XDTE5MDUyMDE3NDMwN1owIwYJKoZIhvcNAQkEMRYEFDG8nmHRhEGjtx7t
+# 49EyQNpyAIPsMIGdBgsqhkiG9w0BCRACDDGBjTCBijCBhzCBhAQUY7gvq2H1g5CW
 # lQULACScUCkz7HkwbDBWpFQwUjELMAkGA1UEBhMCQkUxGTAXBgNVBAoTEEdsb2Jh
 # bFNpZ24gbnYtc2ExKDAmBgNVBAMTH0dsb2JhbFNpZ24gVGltZXN0YW1waW5nIENB
-# IC0gRzICEhEh1pmnZJc+8fhCfukZzFNBFDANBgkqhkiG9w0BAQEFAASCAQBh/sfF
-# CcXi1A1GwqSlHG/BuI4e1/g2BYSvUviceQVlr05btQuE4KgL+/EsgcNtsx9Tuhts
-# 6diai/tDDQ1lZud7XWGb1V+tCiubth2GaL40BwXr246chDqKKFcKnIiVR4ujKdA+
-# qQ10zaDpzwk1rF/xF+OdXT4WP6DpaHjjGah7VbFEdaLAYdPzwuxbxvGYKeERg3Yr
-# ZkkzABv0P/WGdziUwy5Z58L+clg6647doEFoAU73oduonVTaikaRn5yOvejkvs86
-# mIaViPFmnx/NTEx7uv7pdEW3qQWx/XH6eRAfx6z1RP3/wSNFGR8mhN+w6x095Krg
-# aCjHJx0yn80bgIxC
+# IC0gRzICEhEh1pmnZJc+8fhCfukZzFNBFDANBgkqhkiG9w0BAQEFAASCAQAzAc66
+# 6d72Fla80IqIJmg/azWa+m7hruwh6QHoEQQh2iUwKMqOUekq9yRhu/8ILwIyggi+
+# ZEs1yTM6EtiN3ZJiU2qBOh0QLOyqrxjWH/rfn6t0VXkl0ksYohedevCtlgkdj7gu
+# WLXcV46EuIIGB/AwFeeBJMmdLnHPSJ60y52Chdfrxqf07jD/6QJAVUYp1XUlN93T
+# WNfTXBQYXUH+d2sN7vYbNYaYbqWXZzHYM3tqU+GVbYgvMtG4M2ObUKGcmSsNo895
+# K605s0Cbl5n7df3UlHNgV+wN/LTe16O3lbDbqZ2ZjyUmsmLymeEWvf5cBmKO/cN0
+# pEM4SevKnQuEi+Yz
 # SIG # End signature block
