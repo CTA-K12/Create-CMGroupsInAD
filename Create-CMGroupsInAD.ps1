@@ -16,7 +16,7 @@ $rootDN = [ADSI]"LDAP://RootDSE"; $rootDN = $rootDN.rootDomainNamingContext
 $softwareDistrobutionDN = 'OU=Software Distribution,', "$rootDN" -join ''
 $csvpath = C:\Scipts\Create-CMGroupsInAD\groups.csv
 
-Invoke-WebRequest -Uri "" | Select-Object -ExpandProperty Content | Out-File $csvpath
+Invoke-WebRequest -Uri "https://raw.githubusercontent.com/CascadeTechnologyAlliance/Create-CMGroupsInAD/master/Groups.csv" | Select-Object -ExpandProperty Content | Out-File $csvpath
 
 $AllGroups = Import-Csv -Path $csvpath
 
